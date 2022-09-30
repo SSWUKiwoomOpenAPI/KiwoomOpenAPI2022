@@ -13,3 +13,6 @@ class Kiwoom(QWidget, metaclass=Singleton):       # QMainWindow : PyQt5에서 �
         ################ 로그인 관련 정보
 
         self.kiwoom = QAxWidget('KHOPENAPI.KHOpenAPICtrl.1')       
+
+        ################# 전체 공유 데이터
+        self.All_Stock_Code = {}        # 코스피, 코스닥 전체 코드 넘버 입력
