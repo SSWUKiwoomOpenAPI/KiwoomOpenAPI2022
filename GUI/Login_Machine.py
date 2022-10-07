@@ -22,11 +22,11 @@ class Login_Machine(QMainWindow, QWidget, form_class):       # QMainWindow : PyQ
         self.setUI()                                         # UI 초기값 셋업 반드시 필요
 
         ### 초기 셋팅 : 계좌평가잔고내역
-        self.label_2.setText(str("총매입금액"))
-        self.label_3.setText(str("총평가금액"))
-        self.label_4.setText(str("추정예탁자산"))
-        self.label_7.setText(str("총평가손익금액"))
-        self.label_9.setText(str("총수익률(%)"))
+        self.label_11.setText(str("총매입금액"))
+        self.label_12.setText(str("총평가금액"))
+        self.label_13.setText(str("추정예탁자산"))
+        self.label_14.setText(str("총평가손익금액"))
+        self.label_15.setText(str("총수익률(%)"))
 
 
         #### 기타 함수
