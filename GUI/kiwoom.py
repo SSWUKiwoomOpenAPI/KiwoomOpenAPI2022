@@ -18,3 +18,13 @@ class Kiwoom(QWidget, metaclass=Singleton):       # QMainWindow : PyQt5에서 �
         ################# 전체 공유 데이터
         self.All_Stock_Code = {}            # 코스피, 코스닥 전체 코드넘버 입력
         self.acc_portfolio = {}             # 계좌에 들어있는 종목의 코드, 수익률 등등 입력
+        self.portfolio_stock_dic = {}       # 매매에 관한 모든 종목이 모두 들어간다
+
+        self.today_meme = []                #금일 매매하는 종목에 대하여 들어간다.
+        self.not_account_stock_dict = {}    # 미체결잔고
+
+
+        ##################### 오늘 산 잔고
+
+        self.jango_dict = {}
+        self.buy_jogon = {}
