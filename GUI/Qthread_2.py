@@ -21,7 +21,7 @@ class Thread2(QThread):
         self.Predic_Screen="1400" #일봉 차트를 위한 스크린 번호
         self.calcul_data=[]
         self.second_filter=[]
-        self.Predic_Start=[]
+        self.Predic_start=[]
         ###### 슬롯
         self.k.kiwoom.OnReceiveTrData.connect(self.trdata_slot)  # 내가 알고 있는 Tr 슬롯에다 특정 값을 던져 준다.
 
