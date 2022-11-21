@@ -31,11 +31,14 @@ class Thread2(QThread):
         ###### 기관외국인 평균가 가져오기
         self.C_K_F_class()
 
-        ######역배열 평가
+        ###### 역배열 평가
         self.Invers_arrangement()
 
+        ###### RSI
+        self.Rsi()
+
         ###### 결과 붙이기(gui)
-        column_head = ["종목코드", "종목명", "위험도","역배열"]
+        column_head = ["종목코드", "종목명", "위험도","역배열","RSI"]
         colCount = len(column_head)
         rowCount = len(self.k.acc_portfolio)
         self.parent.Danger_wd.setColumnCount(colCount)  # 행 갯수
@@ -47,6 +50,7 @@ class Thread2(QThread):
             self.parent.Danger_wd.setItem(index2, 1, QTableWidgetItem(self.k.acc_portfolio[k]["종목명"]))
             self.parent.Danger_wd.setItem(index2, 2, QTableWidgetItem(self.k.acc_portfolio[k]["위험도"]))
             self.parent.Danger_wd.setItem(index2, 3, QTableWidgetItem(self.k.acc_portfolio[k]["역배열"]))
+            self.parent.Danger_wd.setItem(index2, 4, QTableWidgetItem(self.k.acc_portfolio[k]["RSI"]))
             index2 += 1
 
 
@@ -64,6 +68,7 @@ class Thread2(QThread):
         for idx, code in enumerate(code_list):
             #self.parent.progressBar5.setValue(idx) / 차 후 설명드리겠습니다.
 
+            # 지연 발생, 키움 서버 보호 차원
             QTest.qWait(1000)
 
             self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Find_down_Screen)  # 해당 스크린을 끊고 다시 시작
@@ -99,7 +104,7 @@ class Thread2(QThread):
             self.k.kiwoom.dynamicCall("CommRqData(QString,QString,int,QString","주식일봉차트조회","opt10081","0",self.Predic_Screen)
             self.detail_account_info_event_loop.exec_()
 
-
+    ###########위험도 판별#########
     def kigwan_meme_dong2(self, a, c):  # a. 기관일별순매수량, b. 종가/기관/외국인 평균가, c. 외국인일별순매수량, d. 등락률
 
         a = a[0:4]
@@ -121,6 +126,57 @@ class Thread2(QThread):
 
         else:
             self.k.acc_portfolio[self.code_in_all].update({"위험도": "낮음"})
+
+    # 단순 이동 평균 (SMA)
+    def SMA(data, period=30, column='Close'):
+        return data[column].rolling(window=period).mean()
+
+    # 지수 이동 평균 (EMA)
+    def EMA (data, period=20, column='Close'):
+        return data[column].ewm (span = period, adjust = False).mean()
+
+    # MACD
+    def MACD(data, period_long = 26, period_short=12, period_signal=9, column='Close'):
+        # 단기 지수 이평선 계산
+        ShortEMA = EMA(data, period_short, column=column)
+
+        # 장기 지수 이평선 계산
+        LongEMA = EMA(data, period_long, column=column)
+
+        #이동 평균 수렴/발산 계산
+        data['MACD'] = ShortEMA - LongEMA
+
+        # 신호선 계산
+        data['Signal_Line'] = EMA(data, period_signal, column='MACD')
+
+        return data
+
+
+    def Rsi(data, period = 14, column = 'Close'):
+        delta = data[column].diff(1)
+        delta = delta[1:]
+
+        up = delta.copy()
+        down = delta.copy()
+        up[up<0]=0
+        delta['up']=up
+        delta['down']=down
+
+        AVG_Gain = SMA(data,period,column='up')
+        AVG_Loss=abs(SMA(data, period, column='down'))
+        RS=AVG_Gain / AVG_Loss
+
+        RSI = 100.0 - (100.0/ (1.0+RS))
+        data ['RSI'] = RSI
+
+        if data <30:
+            data.k.acc_portfolio[data.code_in_all].update({"매수 타이밍"})
+        
+        elif data >70:
+            data.k.acc_portfolio[data.code_in_all].update({"매도 타이밍"})
+
+        else:
+            data.k.acc_portfolio[data.code_in_all].update({"기다리세요."})
 
 
     def trdata_slot(self, sScrNo, sRQName, sTrCode, sRecordName, sPrevNext):
