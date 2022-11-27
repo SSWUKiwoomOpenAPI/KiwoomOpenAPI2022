@@ -207,22 +207,30 @@ class Thread2(QThread):
             else:  # 만약 120개의 데이터가 존재한다면
 
                 total_five_price = []  # 다음번 코드를 위해 0으로 초기화
-                total_twenty_price = []  # 다음번 코드를 위해 0으로 초기화
+                total_twenty_price = []
+                total_sixty_price = []
+                total_onehtwenty_price = []
 
                 for k in range(10):    # range(10) = 0 ,1 .... 9
                     total_five_price.append(sum(self.Predic_start[k: 5 + k]) / 5)  # a[0:5] = 0, 1, 2, 3, 4
 
                 for k in range(10):
-
                     total_twenty_price.append(sum(self.Predic_start[k: 20 + k]) / 20)
 
+                for k in range(10):
+                    total_sixty_price.append(sum(self.Predic_start[k: 60 + k]) / 60)
+
+                for k in range(10):
+                    total_onehtwenty_price.append(sum(self.Predic_start[k: 120 + k]) / 120)
 
                 add_item = 0
 
                 for k in range(10):
 
-                    if float(total_five_price[k]) < float(total_twenty_price[k]) and float(self.calcul_data[k][1]) < float(total_twenty_price[k]):
-                        add_item += 1
+                    if float(total_twenty_price[0]) < float(total_twenty_price[9]) and float(total_sixty_price[0]) < float(total_sixty_price[9]) and float(total_onehtwenty_price[0]) < float(total_onehtwenty_price[9]):
+                        #if float(total_five_price[k]) < float(total_twenty_price[k]):
+                        if float(total_twenty_price[k]) < float(total_sixty_price[k]) and float(total_sixty_price[k]) < float(total_onehtwenty_price[k]):
+                            add_item += 1
                     else:
                         pass
 
