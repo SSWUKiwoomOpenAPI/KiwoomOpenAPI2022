@@ -26,7 +26,6 @@ class Thread2(QThread):
         self.C_K_F_class()
 
 
-
     def C_K_F_class(self):
 
         code_list = []
@@ -60,6 +59,29 @@ class Thread2(QThread):
             self.k.kiwoom.dynamicCall("CommRqData(String, String, int, String)", "종목별기관매매추이요청2", "opt10045", "0", self.Find_down_Screen)
             self.detail_account_info_event_loop.exec_()
 
+    def kigwan_meme_dong2(self, a, c):  # a. 기관일별순매수량, b. 종가/기관/외국인 평균가, c. 외국인일별순매수량, d. 등락률
+
+        a = a[0:4]
+        c = c[0:4]
+        print(a)
+        # a = sum(a, [])
+        # c = sum(c, [])
+
+
+
+        if a[0] < 0 and a[1] < 0 and a[2] < 0 and a[3] < 0 and c[0] < 0 and c[1] < 0 and c[2] < 0 and c[3] < 0:
+            self.k.acc_portfolio[self.code_in_all].update({"위험도": "손절"})
+
+        elif a[0] < 0 and a[1] < 0 and a[2] < 0 and c[0] < 0 and c[1] < 0 and c[2] < 0:
+            self.k.acc_portfolio[self.code_in_all].update({"위험도": "주의"})
+
+        elif a[0] < 0 and a[1] < 0 and c[0] < 0 and c[1] < 0:
+            self.k.acc_portfolio[self.code_in_all].update({"위험도": "관심"})
+
+        else:
+            self.k.acc_portfolio[self.code_in_all].update({"위험도": "낮음"})
+
+
     def trdata_slot(self, sScrNo, sRQName, sTrCode, sRecordName, sPrevNext):
 
         if sRQName == "종목별기관매매추이요청2":
@@ -86,3 +108,10 @@ class Thread2(QThread):
                 self.calcul2_data2.append(abs(int(Forgin_meme_ave.strip())))
                 self.calcul2_data3.append(int(Forgin_meme.strip()))
                 self.calcul2_data4.append(float(percentage.strip()))
+
+                # 여기까지 code의 기관일별순매수량, 외국인일별순매수량, 기관/외국인 평균가, 등락률 정보가 나온다.
+                # self.kigwan_meme_dong2(self.calcul2_data, self.calcul2_data2[0:3], self.calcul2_data3, self.calcul2_data4)
+
+            self.kigwan_meme_dong2(self.calcul2_data, self.calcul2_data3)
+
+            self.detail_account_info_event_loop.exit()
