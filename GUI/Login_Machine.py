@@ -1,3 +1,4 @@
+import os                         # 현재 디렉토리 확인 기능
 import sys                        # system specific parameters and functions : 파이썬 스크립트 관리
 from PyQt5.QtWidgets import *     # GUI의 그래픽적 요소를 제어       하단의 terminal 선택, activate py37_32,  pip install pyqt5,   전부다 y
 from PyQt5 import uic             # ui 파일을 가져오기위한 함수
@@ -21,12 +22,35 @@ class Login_Machnine(QMainWindow, QWidget, form_class):       # QMainWindow : Py
         form_class.__init__(self)                            # 상속 받은 from_class를 실행하기 위한 초기값(초기화)
         self.setUI()                                         # UI 초기값 셋업 반드시 필요
 
-        ### 초기 셋팅
+        ### 초기 셋팅 : 계좌평가잔고내역
         self.label_11.setText(str("총매입금액"))
         self.label_12.setText(str("총평가금액"))
         self.label_13.setText(str("추정예탁자산"))
         self.label_14.setText(str("총평가손익금액"))
         self.label_15.setText(str("총수익률(%)"))
+
+
+        ### 초기 셋팅 : 분할 매수/매도
+        self.textEdit_1.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_2.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_3.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_4.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_5.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_6.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_7.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_8.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_9.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_10.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_11.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_12.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_13.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_14.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_15.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_16.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_17.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_18.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_19.setPlainText("0")      # 초기 매수 금액
+        self.textEdit_20.setPlainText("0")      # 초기 매수 금액
 
 
         #### 기타 함수
@@ -45,7 +69,67 @@ class Login_Machnine(QMainWindow, QWidget, form_class):       # QMainWindow : Py
         self.k.kiwoom.OnReceiveTrData.connect(self.trdata_slot)           # 키움서버 데이터 받는 곳
         self.additmelast.clicked.connect(self.searchItem2)                # 종목 추가
         self.Deletcode.clicked.connect(self.deltecode)                        # 종목 삭제
+
+
+        ################# 부가기능 2 : 데이터베이스화 하기, 저장, 삭제, 불러오기
+        self.Getanal_code = []                                                 # 불러온 파일 저장
+        self.Save_Stock.clicked.connect(self.Save_selected_code)               # 종목 저장
+        self.Del_Stock.clicked.connect(self.delet_code)                        # 종목 삭제
+        self.Load_Stock.clicked.connect(self.Load_code)                        # 종목 불러오기
         ####################
+
+    def Load_code(self):
+
+        if os.path.exists("dist/Selected_code.txt"):
+            f = open("dist/Selected_code.txt", "r", encoding="utf8")
+            lines = f.readlines()  # 여러 종목이 저장되어 있다면 모든 항목을 가져온다.
+
+            for line in lines:
+                if line != "":                     # 만약에 line이 비어 있지 않다면
+                    ls = line.split("\t")          # \t(tap)로 구분을 지어 놓는다.
+                    t_code = ls[0]
+                    t_name = ls[1]
+                    curren_price = ls[2]
+                    dept = ls[3].split("\n")[0]
+
+                    self.Getanal_code.append([t_code, t_name, curren_price, dept])
+
+            f.close()
+
+        column_head = ["종목코드", "종목명", "현재가", "신용비율"]
+        colCount = len(column_head)
+        rowCount = len(self.Getanal_code)
+
+        self.buylast.setColumnCount(colCount)  # 행 갯수
+        self.buylast.setRowCount(rowCount)  # 열 갯수 (종목 수)
+        self.buylast.setHorizontalHeaderLabels(column_head)  # 행의 이름 삽입
+        self.buylast.setSelectionMode(QAbstractItemView.SingleSelection)
+
+        for index in range(rowCount):
+
+            self.buylast.setItem(index, 0, QTableWidgetItem(str(self.Getanal_code[index][0])))
+            self.buylast.setItem(index, 1, QTableWidgetItem(str(self.Getanal_code[index][1])))
+            self.buylast.setItem(index, 2, QTableWidgetItem(str(self.Getanal_code[index][2])))
+            self.buylast.setItem(index, 3, QTableWidgetItem(str(self.Getanal_code[index][3])))
+
+
+    def Save_selected_code(self):
+
+        for row in range(self.buylast.rowCount()):
+
+            code_n = self.buylast.item(row, 0).text()
+            name = self.buylast.item(row, 1).text().strip()
+            price = self.buylast.item(row, 2).text()
+            dept = self.buylast.item(row, 3).text()
+
+            f = open("dist/Selected_code.txt", "a",encoding="utf8")  # "a" 달아 쓴다. "w" 덮어 쓴다. files라느 파이썬 페키지 볼더를 만든다.
+            f.write("%s\t%s\t%s\t%s\n" % (code_n, name, price, dept))  # t는 tap을 의미한다.
+            f.close()
+
+    def delet_code(self):
+
+        if os.path.exists("dist/Selected_code.txt"):
+            os.remove("dist/Selected_code.txt")
 
     def deltecode(self):
         x = self.buylast.selectedIndexes()  # 리스트로 선택된 행번호와 열번호가 x에 입력된다.
