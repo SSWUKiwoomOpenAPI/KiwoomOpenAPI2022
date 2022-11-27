@@ -1,4 +1,4 @@
-import os                                   # 현재 디렉토리 확인 기능
+"""import os                                   # 현재 디렉토리 확인 기능
 from PyQt5.QtCore import *                  # 쓰레드 함수를 불러온다.
 from kiwoom import Kiwoom                   # 로그인을 위한 클래스
 from kiwoomType import *
@@ -502,3 +502,4 @@ class Thread3(QThread):
             if sCode in self.k.acc_portfolio.keys() and stock_quan == 0:
                 del self.k.acc_portfolio[sCode]
                 #self.k.acc_portfolio[sCode]['매매가능수량'] = 0
+            """
