@@ -16,6 +16,12 @@ class Thread2(QThread):
         self.Find_down_Screen = "1200"  # 계좌평가잔고내역을 받기위한 스크린
         self.code_in_all = None  # 1600개 코드 중 1개 코드, 쌓이지 않고 계속 갱신
 
+        #################### 기관/외국인 매매동향 가져오기 사용되는 변수
+        self.Predic_Screen = "1400"     # 일봉차트를 가져오기 위한 스크린
+        self.calcul_data = []           # 받아온 종목의 다양한 값을 계산한다. (현재가/고가/저가 등)
+        self.second_filter =[]          # 역배열인지 확인
+        self.Predic_start =[]           # 미래 예측
+
         ###### 슬롯
         self.k.kiwoom.OnReceiveTrData.connect(self.trdata_slot)  # 내가 알고 있는 Tr 슬롯에다 특정 값을 던져 준다.
 
@@ -24,6 +30,9 @@ class Thread2(QThread):
 
         ###### 기관외국인 평균가 가져오기
         self.C_K_F_class()
+
+        ###### 역배열 평가
+        self.Invers_arrangement()
 
 
         ###### 결과 붙이기(gui)
@@ -73,6 +82,26 @@ class Thread2(QThread):
             self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "외인추정단가구분", "1")
             self.k.kiwoom.dynamicCall("CommRqData(String, String, int, String)", "종목별기관매매추이요청2", "opt10045", "0", self.Find_down_Screen)
             self.detail_account_info_event_loop.exec_()
+
+    def Invers_arrangement(self):
+
+        code_list = []
+        for code in self.k.acc_portfolio.keys():
+            code_list.append(code)
+
+        print ("계좌포함 종목 %s" % (code_list))
+
+        for idx, code in enumerate(code_list):
+            QTest.qWait(1000)
+            self.k.kiwoom.dynamicCall("DisconnectRealData(QString)",self.Predic_Screen) # 해당 스크린을 끊고 다시 시작
+            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)","종목코드",code)
+            self.k.kiwoom.dynamicCall("SetInputValue(QString,QString)","수정주가구분","1")  # 수정주가구분 0: 액면분할등이 포함되지 않음, 1: 포함됨
+            self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int , QString)", "주식일봉차트조회","opt10081","0",self.Predic_Screen)
+            self.detail_account_info_event_loop.exec_()
+
+
+
+
 
     def kigwan_meme_dong2(self, a, c):  # a. 기관일별순매수량, b. 종가/기관/외국인 평균가, c. 외국인일별순매수량, d. 등락률
 
