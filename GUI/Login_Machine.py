@@ -44,7 +44,13 @@ class Login_Machnine(QMainWindow, QWidget, form_class):       # QMainWindow : Py
         ################# 부가기능 1 : 종목선택하기 새로운 종목 추가 및 삭제
         self.k.kiwoom.OnReceiveTrData.connect(self.trdata_slot)           # 키움서버 데이터 받는 곳
         self.additmelast.clicked.connect(self.searchItem2)                # 종목 추가
+        self.Deletcode.clicked.connect(self.deltecode)                        # 종목 삭제
         ####################
+
+    def deltecode(self):
+        x = self.buylast.selectedIndexes()  # 리스트로 선택된 행번호와 열번호가 x에 입력된다.
+        self.buylast.removeRow(x[0].row())
+
 
     def searchItem2(self):            # 종목추가시 사용됨.
         itemName = self.searchItemTextEdit2.toPlainText()
