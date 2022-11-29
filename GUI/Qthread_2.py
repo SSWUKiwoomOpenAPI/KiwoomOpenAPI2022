@@ -7,8 +7,8 @@ from datetime import datetime, timedelta    # 특정 일자를 조회
 print("test")
 
 class Thread2(Qthread):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent):     # 부모의 윈도운 창을 가져올 수 있다.
+        super().__init__(parent)    # 부모 윈도우 창을 초기화
         self.parent = parent
 
         self.k = Kiwoom() #키움서버함수사용 절대언어 참고
@@ -35,5 +35,26 @@ class Thread2(Qthread):
 
         print("계좌 종목 개수 %s" % (code_list))
 
+<<<<<<< Updated upstream
 
 print("연습용")
+=======
+        for idx, code in enumerate(code_list):
+            QTest.qWait(1000)
+
+            self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Find_down_Screen)
+            self.code_in_all = code  # 종목코드 선언 (중간에 코드 정보 받아오기 위해서)
+            print("%s / %s : 종목 검사 중 코드이름 : %s." % (idx + 1, len(code_list), self.code_in_all))
+
+            date_today = datetime.today().strftime("%Y%m%d")
+            date_prev = datetime.today() - timedelta(10)  # 넉넉히 10일전의 데이터를 받아온다. 또는 20일이상 데이터도 필요
+            date_prev = date_prev.strftime("%Y%m%d")
+
+            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
+            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "시작일자", date_prev)
+            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종료일자", date_today)
+            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "기관추정단가구분", "1")
+            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "외인추정단가구분", "1")
+            self.k.kiwoom.dynamicCall("CommRqData(String, String, int, String)", "종목별기관매매추이요청2", "opt10045", "0", self.Find_down_Screen)
+            self.detail_account_info_event_loop.exec_()
+>>>>>>> Stashed changes
