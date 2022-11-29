@@ -51,7 +51,6 @@ class Thread2(Qthread):
             self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "외인추정단가구분", "1")
             self.k.kiwoom.dynamicCall("CommRqData(String, String, int, String)", "종목별기관매매추이요청2", "opt10045", "0", self.Find_down_Screen)
             self.detail_account_info_event_loop.exec_()
-
     def trdata_slot(self, sScrNo, sRQName, sTrCode, sRecordName, sPrevNext):
 
         if sRQName == "종목별기관매매추이요청2":
