@@ -51,3 +51,30 @@ class Thread2(Qthread):
             self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "외인추정단가구분", "1")
             self.k.kiwoom.dynamicCall("CommRqData(String, String, int, String)", "종목별기관매매추이요청2", "opt10045", "0", self.Find_down_Screen)
             self.detail_account_info_event_loop.exec_()
+
+    def trdata_slot(self, sScrNo, sRQName, sTrCode, sRecordName, sPrevNext):
+
+        if sRQName == "종목별기관매매추이요청2":
+
+            cnt2 = self.k.kiwoom.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRQName)  # 10일치 이상을 하려면 이부분에 10일치 이상데이터 필요
+
+            self.calcul2_data = []
+            self.calcul2_data2 = []
+            self.calcul2_data3 = []
+            self.calcul2_data4 = []
+
+            for i in range(cnt2):  #
+
+                Kigwan_meme = (self.k.kiwoom.dynamicCall("GetCommData(String, String, int, String)", sTrCode, sRQName, i, "기관일별순매매수량"))
+                Kigwan_meme_ave = (self.k.kiwoom.dynamicCall("GetCommData(String, String, int, String)", sTrCode, sRQName, 0, "기관추정평균가"))
+                Forgin_meme = (self.k.kiwoom.dynamicCall("GetCommData(String, String, int, String)", sTrCode, sRQName, i, "외인일별순매매수량"))
+                Forgin_meme_ave = (self.k.kiwoom.dynamicCall("GetCommData(String, String, int, String)", sTrCode, sRQName, 0, "외인추정평균가"))
+                percentage = (self.k.kiwoom.dynamicCall("GetCommData(String, String, int, String)", sTrCode, sRQName, i, "등락율"))
+                Jongga = (self.k.kiwoom.dynamicCall("GetCommData(String, String, int, String)", sTrCode, sRQName, i, "종가"))
+
+                self.calcul2_data.append(int(Kigwan_meme.strip()))
+                self.calcul2_data2.append(abs(int(Jongga.strip())))
+                self.calcul2_data2.append(abs(int(Kigwan_meme_ave.strip())))
+                self.calcul2_data2.append(abs(int(Forgin_meme_ave.strip())))
+                self.calcul2_data3.append(int(Forgin_meme.strip()))
+                self.calcul2_data4.append(float(percentage.strip()))
