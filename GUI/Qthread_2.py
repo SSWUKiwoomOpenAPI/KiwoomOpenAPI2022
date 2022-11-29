@@ -4,8 +4,6 @@ from PyQt5.QtWidgets import *        # PyQt import
 from PyQt5.QtTest import *           # 시간관련 함수
 from datetime import datetime, timedelta    # 특정 일자를 조회
 
-print("test")
-
 class Thread2(Qthread):
     def __init__(self, parent):     # 부모의 윈도운 창을 가져올 수 있다.
         super().__init__(parent)    # 부모 윈도우 창을 초기화
@@ -35,23 +33,10 @@ class Thread2(Qthread):
 
         print("계좌 종목 개수 %s" % (code_list))
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-print("연습용")
-=======
         for idx, code in enumerate(code_list):
             QTest.qWait(1000)
 
             self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Find_down_Screen)
-=======
-        for idx, code in enumerate(code_list):
-
-            QTest.qWait(1000)
-
-            self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Find_down_Screen)  # 해당 스크린을 끊고 다시 시작
-
->>>>>>> Stashed changes
             self.code_in_all = code  # 종목코드 선언 (중간에 코드 정보 받아오기 위해서)
             print("%s / %s : 종목 검사 중 코드이름 : %s." % (idx + 1, len(code_list), self.code_in_all))
 
@@ -65,9 +50,4 @@ print("연습용")
             self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "기관추정단가구분", "1")
             self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "외인추정단가구분", "1")
             self.k.kiwoom.dynamicCall("CommRqData(String, String, int, String)", "종목별기관매매추이요청2", "opt10045", "0", self.Find_down_Screen)
-<<<<<<< Updated upstream
             self.detail_account_info_event_loop.exec_()
->>>>>>> Stashed changes
-=======
-            self.detail_account_info_event_loop.exec_()
->>>>>>> Stashed changes
