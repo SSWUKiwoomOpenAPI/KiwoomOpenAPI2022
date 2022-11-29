@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import *        # PyQt import
 from PyQt5.QtTest import *           # 시간관련 함수
 from datetime import datetime, timedelta    # 특정 일자를 조회
 
+print("test")
+
 class Thread2(Qthread):
     def __init__(self, parent):
         super().__init__(parent)
