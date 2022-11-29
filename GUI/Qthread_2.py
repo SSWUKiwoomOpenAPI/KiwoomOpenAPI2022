@@ -32,3 +32,6 @@ class Thread2(Qthread):
             code_list.append(code)
 
         print("계좌 종목 개수 %s" % (code_list))
+
+
+print("연습용")
