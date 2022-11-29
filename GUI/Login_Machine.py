@@ -11,7 +11,7 @@ from Qthread_2 import Thread2      # 계좌 관리
 
 #=================== 프로그램 실행 프로그램 =========================#
 
-form_class = uic.loadUiType("ALBA.ui")[0]             # 만들어 놓은 ui 불러오기
+form_class = uic.loadUiType("Qt_GUI.ui")[0]             # 만들어 놓은 ui 불러오기
 
 class Login_Machnine(QMainWindow, QWidget, form_class):       # QMainWindow : PyQt5에서 윈도우 생성시 필요한 함수
 
