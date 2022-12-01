@@ -33,7 +33,7 @@ class Thread2(Qthread):
         self.Invers_arrangement()
 
         ###### 결과 붙이기(gui)
-        column_head = ["종목코드", "종목명", "위험도"]
+        column_head = ["종목코드", "종목명", "위험도","역배열"]
         colCount = len(column_head)
         rowCount = len(self.k.acc_portfolio)
         self.parent.Danger_wd.setColumnCount(colCount)  # 행 갯수
@@ -55,6 +55,10 @@ class Thread2(Qthread):
 
             for idx, code in enumerate(code_list):
               QTest.qWait(1000)
+
+              self.code_in_all = code  # 종목코드 선언
+              print("%s 종목 검사 중 코드이름 : %s." % (idx + 1, self.code_in_all))
+
               self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Predic_Screen)  # 해당 스크린을 끊고 다시 시작
               self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
               self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1") # 수정주가구분 0: 액면분할등이 포함되지 않음, 1: 포함됨
@@ -147,7 +151,7 @@ class Thread2(Qthread):
             self.detail_account_info_event_loop.exit()
 
 
-        elif sRQName == "주식일봉차트조회":
+        if sRQName == "주식일봉차트조회":
 
 
             code = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, 0, "종목코드")
@@ -188,6 +192,8 @@ class Thread2(Qthread):
 
                 total_five_price = []  # 다음번 코드를 위해 0으로 초기화
                 total_twenty_price = []  # 다음번 코드를 위해 0으로 초기화
+                total_sixty_price = []
+                total_onehtwenty_price = []
 
                 for k in range(10):    # range(10) = 0 ,1 .... 9
                     total_five_price.append(sum(self.Predic_start[k: 5 + k]) / 5)  # a[0:5] = 0, 1, 2, 3, 4
@@ -196,13 +202,19 @@ class Thread2(Qthread):
 
                     total_twenty_price.append(sum(self.Predic_start[k: 20 + k]) / 20)
 
+                for k in range (10):
+                    total_sixty_price.append(sum(self.Predic_start[k: 60 + k]) / 60)
+                
+                for k in range (10):
+                    total_onehtwenty_price.append(sum(self.Predic_start[k: 120 + k]) / 120)
 
                 add_item = 0
 
                 for k in range(10):
-
-                    if float(total_five_price[k]) < float(total_twenty_price[k]) and float(self.calcul_data[k][1]) < float(total_twenty_price[k]):
-                        add_item += 1
+                    
+                    if float(total_twenty_price[0]) < float(total_twenty_price[9]) and float(total_sixty_price[0]) < float(total_sixty_price[9]) and float(total_onehtwenty_price[0]) < float(total_onehtwenty_price[9]):
+                        if float(total_five_price[k]) < float(total_twenty_price[k]) and float(self.calcul_data[k][1]) < float(total_twenty_price[k]):
+                            add_item += 1
                     else:
                         pass
 
