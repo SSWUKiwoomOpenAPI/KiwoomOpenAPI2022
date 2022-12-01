@@ -15,6 +15,11 @@ class Thread2(Qthread):
         self.Find_down_Screen = "1200"  # 계좌평가잔고내역을 받기위한 스크린
         self.code_in_all = None  # 1600개 코드 중 1개 코드, 쌓이지 않고 계속 갱신
 
+        self.Predict_Screen = "1400"
+        self.calcul_data = []
+        self.second_filter = []
+        self.Predic_start = []
+
         ###### 슬롯
         self.k.kiwoom.OnReceiveTrData.connect(self.trdata_slot)  # 내가 알고 있는 Tr 슬롯에다 특정 값을 던져 준다.
 
