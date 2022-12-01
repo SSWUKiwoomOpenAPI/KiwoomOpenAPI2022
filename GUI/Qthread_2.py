@@ -24,6 +24,44 @@ class Thread2(Qthread):
         ###### 기관외국인 평균가 가져오기
         self.C_K_F_class()
 
+<<<<<<< Updated upstream
+=======
+        ###### 역배열 평가
+        self.Invers_arrangement()
+
+         ###### 결과 붙이기(gui)
+        column_head = ["종목코드", "종목명", "위험도"]
+        colCount = len(column_head)
+        rowCount = len(self.k.acc_portfolio)
+        self.parent.Danger_wd.setColumnCount(colCount)  # 행 갯수
+        self.parent.Danger_wd.setRowCount(rowCount)  # 열 갯수 (종목 수)
+        self.parent.Danger_wd.setHorizontalHeaderLabels(column_head)  # 행의 이름 삽입
+        index2 = 0
+        for k in self.k.acc_portfolio.keys():
+            self.parent.Danger_wd.setItem(index2, 0, QTableWidgetItem(str(k)))
+            self.parent.Danger_wd.setItem(index2, 1, QTableWidgetItem(self.k.acc_portfolio[k]["종목명"]))
+            self.parent.Danger_wd.setItem(index2, 2, QTableWidgetItem(self.k.acc_portfolio[k]["위험도"]))
+            index2 += 1
+
+        def Invers_arrangement(self):
+            code_list =[]
+            for code in self.k.acc_portfolio.keys():
+                code_list.append(code)
+
+            print("계좌포함 종목 %s" % (code_list))
+
+            for idx, code in enumerate(code_list):
+              QTest.qWait(1000)
+              self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Predic_Screen)  # 해당 스크린을 끊고 다시 시작
+              self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
+              self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1") # 수정주가구분 0: 액면분할등이 포함되지 않음, 1: 포함됨
+              self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Predic_Screen)
+              self.detail_account_info_event_loop.exec_()
+
+
+        
+
+>>>>>>> Stashed changes
     def C_K_F_class(self):
 
         code_list = []
@@ -105,3 +143,35 @@ class Thread2(Qthread):
             self.kigwan_meme_dong2(self.calcul2_data, self.calcul2_data3)
 
             self.detail_account_info_event_loop.exit()
+
+
+        elif sRQName == "주식일봉차트조회":
+
+
+            code = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, 0, "종목코드")
+            code = code.strip()  # 여백 발생 방지
+            cnt = self.k.kiwoom.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRQName)
+
+            
+            for i in range(cnt):  # [0] ~ [599]
+
+                data = []
+                current_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "현재가")
+                value = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "거래량")
+                trading_value = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "거래대금")
+                date = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "일자")  # 접수, 확인, 채결
+                start_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "시가")
+                high_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "고가")
+                low_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "저가")
+
+                data.append("")  # 빈칸을 만들어 주는 이유는 GetCommDataEx함수의 반환값과 동일하게 하기 위해서
+                data.append(current_price.strip())
+                data.append(value.strip())
+                data.append(trading_value.strip())
+                data.append(date.strip())
+                data.append(start_price.strip())
+                data.append(high_price.strip())
+                data.append(low_price.strip())
+                data.append("")
+
+                self.calcul_data.append(data.copy())  # 리스트로 데이터가 들어간다.
