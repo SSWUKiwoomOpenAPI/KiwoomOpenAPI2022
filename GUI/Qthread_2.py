@@ -176,4 +176,44 @@ class Thread2(Qthread):
                 data.append(low_price.strip())
                 data.append("")
 
+                self.Predic_start.append(int(current_price.strip()))
                 self.calcul_data.append(data.copy())  # 리스트로 데이터가 들어간다.
+
+
+            if self.calcul_data == None or len(self.calcul_data) < 210:
+
+                self.k.acc_portfolio[self.code_in_all].update({"역배열":"데이터 없음"})
+
+            else:  # 만약 120개의 데이터가 존재한다면
+
+                total_five_price = []  # 다음번 코드를 위해 0으로 초기화
+                total_twenty_price = []  # 다음번 코드를 위해 0으로 초기화
+
+                for k in range(10):    # range(10) = 0 ,1 .... 9
+                    total_five_price.append(sum(self.Predic_start[k: 5 + k]) / 5)  # a[0:5] = 0, 1, 2, 3, 4
+
+                for k in range(10):
+
+                    total_twenty_price.append(sum(self.Predic_start[k: 20 + k]) / 20)
+
+
+                add_item = 0
+
+                for k in range(10):
+
+                    if float(total_five_price[k]) < float(total_twenty_price[k]) and float(self.calcul_data[k][1]) < float(total_twenty_price[k]):
+                        add_item += 1
+                    else:
+                        pass
+
+                if add_item >=8:
+                    self.k.acc_portfolio[self.code_in_all].update({"역배열": "맞음"})
+
+                else:
+                    self.k.acc_portfolio[self.code_in_all].update({"역배열": "아님"})
+
+
+            self.calcul_data.clear()  # 코드에 들어 있는 일봉 데이터 삭제
+            self.Predic_start.clear()
+
+            self.detail_account_info_event_loop.exit()
