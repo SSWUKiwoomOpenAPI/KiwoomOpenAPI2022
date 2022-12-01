@@ -24,8 +24,6 @@ class Thread2(Qthread):
         ###### 기관외국인 평균가 가져오기
         self.C_K_F_class()
 
-<<<<<<< Updated upstream
-=======
         ###### 역배열 평가
         self.Invers_arrangement()
 
@@ -61,7 +59,6 @@ class Thread2(Qthread):
 
         
 
->>>>>>> Stashed changes
     def C_K_F_class(self):
 
         code_list = []
