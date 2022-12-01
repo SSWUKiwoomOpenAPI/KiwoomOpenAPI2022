@@ -29,6 +29,27 @@ class Thread2(Qthread):
         ###### 기관외국인 평균가 가져오기
         self.C_K_F_class()
 
+        ###### 역배열 평가
+        self.Invers_arrangement()
+
+        def Invers_arrangement(self):
+            code_list =[]
+            for code in self.k.acc_portfolio.keys():
+                code_list.append(code)
+
+            print("계좌포함 종목 %s" % (code_list))
+
+            for idx, code in enumerate(code_list):
+              QTest.qWait(1000)
+              self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Predic_Screen)  # 해당 스크린을 끊고 다시 시작
+              self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
+              self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1") # 수정주가구분 0: 액면분할등이 포함되지 않음, 1: 포함됨
+              self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Predic_Screen)
+              self.detail_account_info_event_loop.exec_()
+
+
+        
+
     def C_K_F_class(self):
 
         code_list = []
