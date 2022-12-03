@@ -38,6 +38,7 @@ class Thread3(QThread):
         self.k.kiwoom.OnReceiveRealData.connect(self.realdata_slot) #실시간 데이터를 받아오는 곳
 
         self.k.kiwoom.OnReceiveChejanData.connect(self.chejan_slot)   # (주문접수, 체결통보)=0, (잔고변경) = 1 데이터 전송
+
     def Lode_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
             f = open("dist/Selected_code.txt","r",encoding = "utf8")
@@ -86,4 +87,5 @@ class Thread3(QThread):
 
             elif value == '4':
                 print("장 마감했습니다.")
+
                     
