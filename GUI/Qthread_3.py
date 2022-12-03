@@ -15,6 +15,12 @@ class Thread3(QThread):
   
         self.Load_code() #매수 종목/금액/수량 가져오기
 
+        self.realType = RealType()  #실시간 FID번호를 모아두는 곳
+        
+        ##등록된 계좌 전체 해제하기(작동정지되었을때 등록 정보를 다 끊어야 한다)
+        self.k.kiwoom.dynamicCall("SetRealRemove(QString, QString)",["ALL","ALL"])
+        
+        ##키움서버에 리얼 데이터 등록하기
         self.screen_num = 5000
         for code in self.k.portfolio_stock_dict.keys():
             fids = self.realType.REALTYPE['주식체결']['체결시간']
