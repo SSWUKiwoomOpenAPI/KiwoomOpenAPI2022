@@ -183,4 +183,33 @@ class Thread3(QThread):
                             print("최우선매수호가로 주문 전달 성공")
                         else:
                             print("최우선매수호가로 주문 전달 실패")
-=
+
+
+        #2. 매도 알고리즘 가동
+        ######## 1차 익절
+        if self.k.portfolio_stock_dict[sCode]["현재가"] >= self.k.portfolio_stock_dict[sCode]["익절가"]:
+                if sCode not in self.orderitmelist_2:
+
+                    wa = []
+                    wa.append(sCode)
+
+                    if len(wa) > 1:
+                        wa.clear()
+                        pass
+                    else:
+                        print("익절 시작 %s" % sCode)
+
+                        self.orderitmelist_2.append(sCode)  # 이 기법을 더이상 사용하지 못하게 하기
+                        order_success2 = self.k.kiwoom.dynamicCall("SendOrder(QString, QString, QString ,int, QString, int, int, QString, QString)",
+                                                                   ["신규익절", self.k.portfolio_stock_dict[sCode]['주문용스크린번호'], self.account_num, 2, sCode,
+                                                                    self.k.portfolio_stock_dict[sCode]["매수수량"], self.k.portfolio_stock_dict[sCode]["현재가"],
+                                                                    self.realType.SENDTYPE['거래구분']['지정가'], ""])
+
+                        wf2 = open("dist/mesu_database.txt", "a", encoding="utf8")  # "a" 달아 쓴다. "w" 덮어 쓴다. files라느 파이썬 페키지 볼더를 만든다.
+                        wf2.write("%s\t%s\t%s\t%s\n" % ("1익절정보", self.k.portfolio_stock_dict[sCode]["종목명"], b, self.k.portfolio_stock_dict[sCode]["채결시간"]))  # t는 tap을 의미한다.
+                        wf2.close()
+
+                        if order_success2 == 0:
+                            print("익절가로 주문 전달 성공")
+                        else:
+                            print("익절가로 주문 전달 실패")
