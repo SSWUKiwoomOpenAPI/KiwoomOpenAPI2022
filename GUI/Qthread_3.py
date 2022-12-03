@@ -15,6 +15,12 @@ class Thread3(QThread):
   
         self.Load_code() #매수 종목/금액/수량 가져오기
 
+        self.screen_num = 5000
+        for code in self.k.portfolio_stock_dict.keys():
+            fids = self.realType.REALTYPE['주식체결']['체결시간']
+            self.k.kiwoom.dynamicCall("SetRealReg(QString, QString, QString, QString)", self.screen_num, code, fids, "1")
+            self.screen_num += 1
+
     def Lode_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
             f = open("dist/Selected_code.txt","r",encoding = "utf8")
