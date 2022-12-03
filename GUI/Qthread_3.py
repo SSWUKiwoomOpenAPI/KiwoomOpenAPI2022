@@ -34,6 +34,8 @@ class Thread3(QThread):
         self.screen_start_stop_real = "300"  #장 시작 전/후 상태 확인용 스크린 번호
         self.k.kiwoom.dynamicCall("SetRealReg(QString, QString, QString,QString)", self.screen_start_stop_real,'',self.realType.REALTYPE['장시작시간']['장운영구분'],"0") #정보수신
 
+        ##실시간 데이터를 받아오는 슬롯을 설정한다
+        self.k.kiwoom.OnReceiveRealData.connect(self.realdata_slot) #실시간 데이터를 받아오는 곳
 
     def Lode_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
