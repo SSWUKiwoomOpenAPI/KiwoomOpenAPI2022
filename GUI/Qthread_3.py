@@ -37,6 +37,8 @@ class Thread3(QThread):
         ##실시간 데이터를 받아오는 슬롯을 설정한다
         self.k.kiwoom.OnReceiveRealData.connect(self.realdata_slot) #실시간 데이터를 받아오는 곳
 
+        self.k.kiwoom.OnReceiveChejanData.connect(self.chejan_slot)   # (주문접수, 체결통보)=0, (잔고변경) = 1 데이터 전송
+        
     def Lode_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
             f = open("dist/Selected_code.txt","r",encoding = "utf8")
@@ -66,4 +68,90 @@ class Thread3(QThread):
 
             f.close()
 
+    def realdata_slot(self, sCode, sRealType, sRealData):  # 실시간으로 서버에서 데이터들이 날라온다.
+
+        if sRealType == "장시작시간":
+            fid = self.realType.REALTYPE[sRealType]['장운영구분']
+
+            # 실시간시세 데이터 수신 이벤트인 OnReceiveRealData() 가 발생될때 실시간데이터를 얻어오는 함수
+            value = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid)
+
+            if value == '0':
+                print("장 시작 전")
+
+            elif value == '3':
+                print("장 시작")
+
+            elif value == '2':
+                print("장 종료, 동시호가로 넘어감감")
+
+            elif value == '4':
+                print("장 마감했습니다.")
                     
+
+        elif sRealType == "주식체결" and sCode in self.k.portfolio_stock_dict:
+
+
+            fid1 = self.realType.REALTYPE[sRealType]['체결시간']  # 체결시간은 string으로 나온다. HHMMSS
+            a = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid1)
+
+            fid2 = self.realType.REALTYPE[sRealType]['현재가']  # 현재가는 +/-로 나온다.
+            b = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid2)
+            b = abs(int(b))
+
+            fid3 = self.realType.REALTYPE[sRealType]['전일대비']  # 전달 대비 오르거나/내린 가격
+            c = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid3)
+            c = abs(int(c))
+
+            fid4 = self.realType.REALTYPE[sRealType]['등락율']  # 전달 대비 오르거나/내린 퍼센테이지
+            d = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid4)
+            d = float(d)
+
+            fid5 = self.realType.REALTYPE[sRealType]['(최우선)매도호가']  # 매도쪽에 첫번재 부분(시장가)
+            e = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid5)
+            e = abs(int(e))
+
+            fid6 = self.realType.REALTYPE[sRealType]['(최우선)매수호가']  # 매수쪽에 첫번재 부분(시장가)
+            f = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid6)
+            f = abs(int(f))
+
+            fid7 = self.realType.REALTYPE[sRealType]['거래량']  # 틱봉의 현재 거래량 (아주 작으 단위)
+            g = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid7)
+            g = abs(int(g))
+
+            fid8 = self.realType.REALTYPE[sRealType]['누적거래량']
+            h = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid8)
+            h = abs(int(h))
+
+            fid9 = self.realType.REALTYPE[sRealType]['고가']  # 오늘자 재일 높은 가격
+            i = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid9)
+            i = abs(int(i))
+
+            fid10 = self.realType.REALTYPE[sRealType]['시가']  # 시가
+            j = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid10)
+            j = abs(int(j))
+
+            fid11 = self.realType.REALTYPE[sRealType]['저가']  # 전체 재일 낮은 가격
+            k = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid11)
+            k = abs(int(k))
+
+            fid12 = self.realType.REALTYPE[sRealType]['거래회전율']  # 누적 거래회전율
+            l = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid12)
+            l = abs(float(l))
+
+            if sCode not in self.k.portfolio_stock_dict:           # 만약 서버에 등록된 코드가 포트폴리오에 없다면 코드를 등록
+                self.k.portfolio_stock_dict.update({sCode: {}})
+
+            # 포트폴리오 종목코드마다 아래 실시간 데이터를 입력
+            self.k.portfolio_stock_dict[sCode].update({"채결시간": a})       # 아래 내용을 업데이트
+            self.k.portfolio_stock_dict[sCode].update({"현재가": b})
+            self.k.portfolio_stock_dict[sCode].update({"전일대비": c})
+            self.k.portfolio_stock_dict[sCode].update({"등락율": d})
+            self.k.portfolio_stock_dict[sCode].update({"(최우선)매도호가": e})
+            self.k.portfolio_stock_dict[sCode].update({"(최우선)매수호가": f})
+            self.k.portfolio_stock_dict[sCode].update({"거래량": g})
+            self.k.portfolio_stock_dict[sCode].update({"누적거래량": h})
+            self.k.portfolio_stock_dict[sCode].update({"고가": i})
+            self.k.portfolio_stock_dict[sCode].update({"시가": j})
+            self.k.portfolio_stock_dict[sCode].update({"저가": k})
+            self.k.portfolio_stock_dict[sCode].update({"거래회전율": l})
