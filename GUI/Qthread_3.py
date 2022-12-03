@@ -27,6 +27,14 @@ class Thread3(QThread):
             self.k.kiwoom.dynamicCall("SetRealReg(QString, QString, QString, QString)", self.screen_num, code, fids, "1")
             self.screen_num += 1
 
+        print("종목등록 완료")
+        print(self.k.portfolio_stock_dict.keys())
+
+        ##현재 장 상태 알아보기(장 시작/장 마감 등)
+        self.screen_start_stop_real = "300"  #장 시작 전/후 상태 확인용 스크린 번호
+        self.k.kiwoom.dynamicCall("SetRealReg(QString, QString, QString,QString)", self.screen_start_stop_real,'',self.realType.REALTYPE['장시작시간']['장운영구분'],"0") #정보수신
+
+
     def Lode_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
             f = open("dist/Selected_code.txt","r",encoding = "utf8")
