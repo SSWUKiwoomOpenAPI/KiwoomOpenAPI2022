@@ -87,5 +87,100 @@ class Thread3(QThread):
 
             elif value == '4':
                 print("장 마감했습니다.")
-
                     
+
+        elif sRealType == "주식체결" and sCode in self.k.portfolio_stock_dict:
+
+
+            fid1 = self.realType.REALTYPE[sRealType]['체결시간']  # 체결시간은 string으로 나온다. HHMMSS
+            a = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid1)
+
+            fid2 = self.realType.REALTYPE[sRealType]['현재가']  # 현재가는 +/-로 나온다.
+            b = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid2)
+            b = abs(int(b))
+
+            fid3 = self.realType.REALTYPE[sRealType]['전일대비']  # 전달 대비 오르거나/내린 가격
+            c = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid3)
+            c = abs(int(c))
+
+            fid4 = self.realType.REALTYPE[sRealType]['등락율']  # 전달 대비 오르거나/내린 퍼센테이지
+            d = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid4)
+            d = float(d)
+
+            fid5 = self.realType.REALTYPE[sRealType]['(최우선)매도호가']  # 매도쪽에 첫번재 부분(시장가)
+            e = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid5)
+            e = abs(int(e))
+
+            fid6 = self.realType.REALTYPE[sRealType]['(최우선)매수호가']  # 매수쪽에 첫번재 부분(시장가)
+            f = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid6)
+            f = abs(int(f))
+
+            fid7 = self.realType.REALTYPE[sRealType]['거래량']  # 틱봉의 현재 거래량 (아주 작으 단위)
+            g = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid7)
+            g = abs(int(g))
+
+            fid8 = self.realType.REALTYPE[sRealType]['누적거래량']
+            h = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid8)
+            h = abs(int(h))
+
+            fid9 = self.realType.REALTYPE[sRealType]['고가']  # 오늘자 재일 높은 가격
+            i = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid9)
+            i = abs(int(i))
+
+            fid10 = self.realType.REALTYPE[sRealType]['시가']  # 시가
+            j = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid10)
+            j = abs(int(j))
+
+            fid11 = self.realType.REALTYPE[sRealType]['저가']  # 전체 재일 낮은 가격
+            k = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid11)
+            k = abs(int(k))
+
+            fid12 = self.realType.REALTYPE[sRealType]['거래회전율']  # 누적 거래회전율
+            l = self.k.kiwoom.dynamicCall("GetCommRealData(QString, int)", sCode, fid12)
+            l = abs(float(l))
+
+            if sCode not in self.k.portfolio_stock_dict:           # 만약 서버에 등록된 코드가 포트폴리오에 없다면 코드를 등록
+                self.k.portfolio_stock_dict.update({sCode: {}})
+
+            # 포트폴리오 종목코드마다 아래 실시간 데이터를 입력
+            self.k.portfolio_stock_dict[sCode].update({"채결시간": a})       # 아래 내용을 업데이트
+            self.k.portfolio_stock_dict[sCode].update({"현재가": b})
+            self.k.portfolio_stock_dict[sCode].update({"전일대비": c})
+            self.k.portfolio_stock_dict[sCode].update({"등락율": d})
+            self.k.portfolio_stock_dict[sCode].update({"(최우선)매도호가": e})
+            self.k.portfolio_stock_dict[sCode].update({"(최우선)매수호가": f})
+            self.k.portfolio_stock_dict[sCode].update({"거래량": g})
+            self.k.portfolio_stock_dict[sCode].update({"누적거래량": h})
+            self.k.portfolio_stock_dict[sCode].update({"고가": i})
+            self.k.portfolio_stock_dict[sCode].update({"시가": j})
+            self.k.portfolio_stock_dict[sCode].update({"저가": k})
+            self.k.portfolio_stock_dict[sCode].update({"거래회전율": l})
+
+        #####1. 매수 알고리즘 가동
+
+        if self.k.portfolio_stock_dict[sCode]["현재가"] <= self.k.portfolio_stock_dict[sCode]["매수가"]:
+                if sCode not in self.orderitmelist_1:
+
+                    wa = []
+                    wa.append(sCode)
+
+                    if len(wa) > 1:
+                        wa.clear()
+                        pass
+                    else:
+                        print("매수 시작 %s" % sCode)
+
+                        self.orderitmelist_1.append(sCode)  # 이 기법을 더이상 사용하지 못하게 하기
+                        order_success1 = self.k.kiwoom.dynamicCall("SendOrder(QString, QString, QString ,int, QString, int, int, QString, QString)",
+                                                                   ["신규매수", self.k.portfolio_stock_dict[sCode]['주문용스크린번호'], self.account_num, 1, sCode,
+                                                                    self.k.portfolio_stock_dict[sCode]["매수수량"], self.k.portfolio_stock_dict[sCode]["현재가"],
+                                                                    self.realType.SENDTYPE['거래구분']['지정가'], ""])
+
+                        wf2 = open("dist/mesu_database.txt", "a", encoding="utf8")  # "a" 달아 쓴다. "w" 덮어 쓴다. files라느 파이썬 페키지 볼더를 만든다.
+                        wf2.write("%s\t%s\t%s\t%s\n" % ("1매수정보", self.k.portfolio_stock_dict[sCode]["종목명"], b, self.k.portfolio_stock_dict[sCode]["채결시간"]))  # t는 tap을 의미한다.
+                        wf2.close()
+
+                        if order_success1 == 0:
+                            print("최우선매수호가로 주문 전달 성공")
+                        else:
+                            print("최우선매수호가로 주문 전달 실패")
