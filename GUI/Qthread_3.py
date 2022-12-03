@@ -38,7 +38,6 @@ class Thread3(QThread):
         self.k.kiwoom.OnReceiveRealData.connect(self.realdata_slot) #실시간 데이터를 받아오는 곳
 
         self.k.kiwoom.OnReceiveChejanData.connect(self.chejan_slot)   # (주문접수, 체결통보)=0, (잔고변경) = 1 데이터 전송
-
     def Lode_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
             f = open("dist/Selected_code.txt","r",encoding = "utf8")
@@ -155,7 +154,7 @@ class Thread3(QThread):
             self.k.portfolio_stock_dict[sCode].update({"시가": j})
             self.k.portfolio_stock_dict[sCode].update({"저가": k})
             self.k.portfolio_stock_dict[sCode].update({"거래회전율": l})
-
+            
         #####1. 매수 알고리즘 가동
 
         if self.k.portfolio_stock_dict[sCode]["현재가"] <= self.k.portfolio_stock_dict[sCode]["매수가"]:
@@ -184,3 +183,4 @@ class Thread3(QThread):
                             print("최우선매수호가로 주문 전달 성공")
                         else:
                             print("최우선매수호가로 주문 전달 실패")
+=
