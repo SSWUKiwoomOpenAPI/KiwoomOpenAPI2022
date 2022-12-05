@@ -13,7 +13,14 @@ class Thread3(QThread):
         account = self.parent.accComboBox.currentText()
         self.account_num = account  #계좌번호 가져오기
   
+        ### 매수 관련 변수
         self.Load_code() #매수 종목/금액/수량 가져오기
+        self.orderitmelist_1 = [] # 중복 매수 금지
+        self.orderitmelist_2 = [] # 중복 익절 금지
+        self.orderitmelist_3 = [] # 중복 손절 금지
+        self.orderitmelist_4 = [] # 중복 재매수 금지
+
+        self.cancel_the_order = []
 
         self.realType = RealType()  #실시간 FID번호를 모아두는 곳
         
@@ -38,6 +45,7 @@ class Thread3(QThread):
         self.k.kiwoom.OnReceiveRealData.connect(self.realdata_slot) #실시간 데이터를 받아오는 곳
 
         self.k.kiwoom.OnReceiveChejanData.connect(self.chejan_slot)   # (주문접수, 체결통보)=0, (잔고변경) = 1 데이터 전송
+
     def Lode_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
             f = open("dist/Selected_code.txt","r",encoding = "utf8")
@@ -241,7 +249,9 @@ class Thread3(QThread):
                             print("손절가로 주문 전달 성공")
                         else:
                             print("손절가로 주문 전달 실패")
-                not_meme_list = list(self.k.not_account_stock_dict)  # 체결하지 않은 종목들을 실제 미체결 잔고에서 받아온다.
+
+        ###### 미체결 잔고 매수/매도 취소
+        not_meme_list = list(self.k.not_account_stock_dict)  # 체결하지 않은 종목들을 실제 미체결 잔고에서 받아온다.
 
         if len(self.k.not_account_stock_dict) > 0:
 
@@ -380,8 +390,8 @@ class Thread3(QThread):
             first_buy_price = self.k.kiwoom.dynamicCall("GetChejanData(int)", self.realType.REALTYPE['주문체결']['(최우선)매수호가'])
             first_buy_price = abs(int(first_buy_price))
 
-
-            ######새로운 주문의 미체결 주문번호가 미체결 잔고에 없을 경우 아래와 같이 미체결 잔고 업데이트
+            ###########################
+            # 새로운 주문의 미체결 주문번호(order_number)가 미체결잔고에 없을 경우 아래와 같이 미체결 잔고를 업데이트 한다.
             if order_number not in self.k.not_account_stock_dict.keys():
                 self.k.not_account_stock_dict.update({order_number: {}})
 
