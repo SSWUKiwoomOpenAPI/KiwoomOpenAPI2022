@@ -20,6 +20,10 @@ class Thread2(Qthread):
         self.second_filter = []
         self.Predic_start = []
 
+        self.Rsi_Screen = "1500"     # rsi용 일봉차트 가져오기 위한 스크린
+        self.rsi_total = []
+        self.End_data = []           # 받아온 종목의 전일종가를 가져옴
+
         ###### 슬롯
         self.k.kiwoom.OnReceiveTrData.connect(self.trdata_slot)  # 내가 알고 있는 Tr 슬롯에다 특정 값을 던져 준다.
 
