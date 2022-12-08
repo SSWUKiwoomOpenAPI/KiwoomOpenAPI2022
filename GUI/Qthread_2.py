@@ -76,16 +76,16 @@ class Thread2(Qthread):
             for code in self.k.acc_portfolio.keys():
                 code_list.append(code)
 
-        for idx, code in enumerate(code_list):
-            QTest.qWait(1000)
+            for idx, code in enumerate(code_list):
+                QTest.qWait(1000)
 
-            self.code_in_all = code
+                self.code_in_all = code
 
-            self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Rsi_Screen) 
-            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
-            self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
-            self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Rsi_Screen)
-            self.detail_account_info_event_loop.exec_()
+                self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Rsi_Screen) 
+                self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
+                self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+                self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Rsi_Screen)
+                self.detail_account_info_event_loop.exec_()
 
 
 
