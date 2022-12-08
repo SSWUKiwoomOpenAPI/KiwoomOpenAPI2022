@@ -86,25 +86,6 @@ class Thread2(Qthread):
               self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1") # 수정주가구분 0: 액면분할등이 포함되지 않음, 1: 포함됨
               self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Predic_Screen)
               self.detail_account_info_event_loop.exec_()
-<<<<<<< Updated upstream
-=======
-
-        def RSI(self):
-            code_list = []
-            for code in self.k.acc_portfolio.keys():
-              code_list.append(code)
-
-            for idx, code in enumerate(code_list):
-                QTest.qWait(1000)
-
-                self.code_in_all = code
-
-                self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Rsi_Screen) 
-                self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
-                self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
-                self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Rsi_Screen)
-                self.detail_account_info_event_loop.exec_()
->>>>>>> Stashed changes
         
 
     def C_K_F_class(self):
@@ -188,10 +169,7 @@ class Thread2(Qthread):
             self.kigwan_meme_dong2(self.calcul2_data, self.calcul2_data3)
 
             self.detail_account_info_event_loop.exit()
-<<<<<<< Updated upstream
-=======
-
-
+            
         if sRQName == "주식일봉차트조회":
 
 
