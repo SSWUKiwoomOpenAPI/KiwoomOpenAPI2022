@@ -36,26 +36,25 @@ class Thread2(Qthread):
         ###### 역배열 평가
         self.Invers_arrangement()
 
-<<<<<<< Updated upstream
-=======
-        ###### RSI
+        ######rsi
         self.RSI()
 
-        ###### 결과 붙이기(gui)
-        column_head = ["종목코드", "종목명", "위험도","역배열"]
-        colCount = len(column_head)
-        rowCount = len(self.k.acc_portfolio)
-        self.parent.Danger_wd.setColumnCount(colCount)  # 행 갯수
-        self.parent.Danger_wd.setRowCount(rowCount)  # 열 갯수 (종목 수)
-        self.parent.Danger_wd.setHorizontalHeaderLabels(column_head)  # 행의 이름 삽입
-        index2 = 0
-        for k in self.k.acc_portfolio.keys():
-            self.parent.Danger_wd.setItem(index2, 0, QTableWidgetItem(str(k)))
-            self.parent.Danger_wd.setItem(index2, 1, QTableWidgetItem(self.k.acc_portfolio[k]["종목명"]))
-            self.parent.Danger_wd.setItem(index2, 2, QTableWidgetItem(self.k.acc_portfolio[k]["위험도"]))
-            index2 += 1
+        def RSI(self):
+                code_list = []
+                for code in self.k.acc_portfolio.keys():
+                    code_list.append(code)
 
->>>>>>> Stashed changes
+                for idx, code in enumerate(code_list):
+                    QTest.qWait(1000)
+
+                    self.code_in_all = code
+
+                    self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Rsi_Screen) 
+                    self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
+                    self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
+                    self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Rsi_Screen)
+                    self.detail_account_info_event_loop.exec_()
+
         def Invers_arrangement(self):
             code_list =[]
             for code in self.k.acc_portfolio.keys():
@@ -70,25 +69,6 @@ class Thread2(Qthread):
               self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1") # 수정주가구분 0: 액면분할등이 포함되지 않음, 1: 포함됨
               self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Predic_Screen)
               self.detail_account_info_event_loop.exec_()
-
-        def RSI(self):
-            code_list = []
-            for code in self.k.acc_portfolio.keys():
-                code_list.append(code)
-
-            for idx, code in enumerate(code_list):
-                QTest.qWait(1000)
-
-                self.code_in_all = code
-
-                self.k.kiwoom.dynamicCall("DisconnectRealData(QString)", self.Rsi_Screen) 
-                self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "종목코드", code)
-                self.k.kiwoom.dynamicCall("SetInputValue(QString, QString)", "수정주가구분", "1")
-                self.k.kiwoom.dynamicCall("CommRqData(QString, QString, int, QString)", "주식일봉차트조회", "opt10081", "0", self.Rsi_Screen)
-                self.detail_account_info_event_loop.exec_()
-
-
-
         
 
     def C_K_F_class(self):
