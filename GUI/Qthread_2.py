@@ -174,7 +174,7 @@ class Thread2(Qthread):
                 high_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "고가")
                 low_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "저가")
 
-###rsi용 데이터
+                ###rsi용 데이터
                 
                 end = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "전일종가")
                 self.End_data.append(int(current_price.strip()))
@@ -232,6 +232,62 @@ class Thread2(Qthread):
 
                 else:
                     self.k.acc_portfolio[self.code_in_all].update({"역배열": "아님"})
+            
+#####rsi용
+            if self.rsi_total == None or len(self.calcul_data) < 210:
+                self.k.acc_portfolio[self.code_in_all].update({"RSI":"데이터 없음"})
+
+            else:
+                change = []
+                up_range = []
+                up_range = [0] * 200
+                down_range = []
+                down_range = [0] * 200
+                rsi_au = []
+                rsi_ad = []
+                rsi = []
+
+                for k in range(200):      #넉넉히 100일치 변화량을 저장
+                    change.append(float(self.End_data[k+1]-self.End_data[k]))
+
+                for k in range(150):
+                    if (change[k]>=0):
+                        up_range[k] = change[k]
+                        down_range[k] = 0
+                    else:
+                        up_range[k]=0
+                        down_range[k]=change[k]
+
+                for k in range(10):
+                    rsi_au.append(sum(up_range[k: 14 + k]) / 14)  #상승폭의 평균
+                    rsi_ad.append(sum(down_range[k: 14 + k]) / 14) #하락폭의 평균
+
+                for k in range(10):
+                    rsi.append(float(rsi_au[k]/(rsi_au[k]+rsi_ad[k])*100))
+
+                item_overbuy=0  #과매수
+                item_oversell = 0 #과매도
+
+                for k in range(10):
+                    if (rsi[k]>70):
+                        item_overbuy += 1
+                    elif (rsi[k]<30):
+                        item_oversell += 1
+
+                    else:
+                        pass
+
+                if item_overbuy >=8:
+                    self.k.acc_portfolio[self.code_in_all].update({"RSI": "over 70%"})
+
+                elif item_oversell >=8:
+                    self.k.acc_portfolio[self.code_in_all].update({"RSI": "under 30%"})
+
+                else:
+                    self.k.acc_portfolio[self.code_in_all].update({"RSI": "적정"})
+
+        
+
 
 
             self.calcul_data.clear()  # 코드에 들어 있는 일봉 데이터 삭제
