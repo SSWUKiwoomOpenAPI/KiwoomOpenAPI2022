@@ -251,6 +251,8 @@ class Thread2(Qthread):
 
             self.calcul_data.clear()  # 코드에 들어 있는 일봉 데이터 삭제
             self.Predic_start.clear()
+            self.End_data.clear()
+            self.rsi_total.clear()
 
             self.detail_account_info_event_loop.exit()
 >>>>>>> Stashed changes
