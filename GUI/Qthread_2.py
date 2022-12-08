@@ -174,6 +174,11 @@ class Thread2(Qthread):
                 high_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "고가")
                 low_price = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "저가")
 
+###rsi용 데이터
+                
+                end = self.k.kiwoom.dynamicCall("GetCommData(QString, QString, int, QString)", sTrCode, sRQName, i, "전일종가")
+                self.End_data.append(int(current_price.strip()))
+                
                 data.append("")  # 빈칸을 만들어 주는 이유는 GetCommDataEx함수의 반환값과 동일하게 하기 위해서
                 data.append(current_price.strip())
                 data.append(value.strip())
