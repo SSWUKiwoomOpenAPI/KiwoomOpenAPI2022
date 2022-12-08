@@ -39,6 +39,23 @@ class Thread2(Qthread):
         ######rsi
         self.RSI()
 
+        ###### 결과 붙이기(gui)
+        column_head = ["종목코드", "종목명", "위험도", "역배열","RSI"]
+        colCount = len(column_head)
+        rowCount = len(self.k.acc_portfolio)
+        self.parent.Danger_wd.setColumnCount(colCount)  # 행 갯수
+        self.parent.Danger_wd.setRowCount(rowCount)  # 열 갯수 (종목 수)
+        self.parent.Danger_wd.setHorizontalHeaderLabels(column_head)  # 행의 이름 삽입
+        index2 = 0
+        for k in self.k.acc_portfolio.keys():
+            self.parent.Danger_wd.setItem(index2, 0, QTableWidgetItem(str(k)))
+            self.parent.Danger_wd.setItem(index2, 1, QTableWidgetItem(self.k.acc_portfolio[k]["종목명"]))
+            self.parent.Danger_wd.setItem(index2, 2, QTableWidgetItem(self.k.acc_portfolio[k]["위험도"]))
+            self.parent.Danger_wd.setItem(index2, 3, QTableWidgetItem(self.k.acc_portfolio[k]["역배열"]))
+            self.parent.Danger_wd.setItem(index2, 4, QTableWidgetItem(self.k.acc_portfolio[k]["RSI"]))
+
+            index2 += 1
+
         def RSI(self):
                 code_list = []
                 for code in self.k.acc_portfolio.keys():
