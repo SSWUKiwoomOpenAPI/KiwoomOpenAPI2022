@@ -53,7 +53,6 @@ class Thread2(Qthread):
             self.parent.Danger_wd.setItem(index2, 2, QTableWidgetItem(self.k.acc_portfolio[k]["위험도"]))
             self.parent.Danger_wd.setItem(index2, 3, QTableWidgetItem(self.k.acc_portfolio[k]["역배열"]))
             self.parent.Danger_wd.setItem(index2, 4, QTableWidgetItem(self.k.acc_portfolio[k]["RSI"]))
-
             index2 += 1
 
         def RSI(self):
@@ -255,4 +254,3 @@ class Thread2(Qthread):
             self.rsi_total.clear()
 
             self.detail_account_info_event_loop.exit()
->>>>>>> Stashed changes
