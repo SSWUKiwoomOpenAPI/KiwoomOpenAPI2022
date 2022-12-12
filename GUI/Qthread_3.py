@@ -46,7 +46,7 @@ class Thread3(QThread):
 
         self.k.kiwoom.OnReceiveChejanData.connect(self.chejan_slot)   # (주문접수, 체결통보)=0, (잔고변경) = 1 데이터 전송
 
-    def Lode_code(self):
+    def Load_code(self):
         if os.path.exists("dist/Seclected_code.txt"):
             f = open("dist/Selected_code.txt","r",encoding = "utf8")
             lines = f.readlines()

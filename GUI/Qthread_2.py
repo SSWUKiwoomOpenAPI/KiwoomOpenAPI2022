@@ -37,7 +37,7 @@ class Thread2(QThread):
         self.Invers_arrangement()
 
         ###### 결과 붙이기(gui)
-        column_head = ["종목코드", "종목명", "위험도","역배열"]
+        column_head = ["종목코드", "종목명", "위험도","역배열","RSI"]
         colCount = len(column_head)
         rowCount = len(self.k.acc_portfolio)
         self.parent.Danger_wd.setColumnCount(colCount)  # 행 갯수
@@ -48,6 +48,9 @@ class Thread2(QThread):
             self.parent.Danger_wd.setItem(index2, 0, QTableWidgetItem(str(k)))
             self.parent.Danger_wd.setItem(index2, 1, QTableWidgetItem(self.k.acc_portfolio[k]["종목명"]))
             self.parent.Danger_wd.setItem(index2, 2, QTableWidgetItem(self.k.acc_portfolio[k]["위험도"]))
+            self.parent.Danger_wd.setItem(index2, 3, QTableWidgetItem(self.k.acc_portfolio[k]["역배열"]))
+            self.parent.Danger_wd.setItem(index2, 4, QTableWidgetItem(self.k.acc_portfolio[k]["RSI"]))
+        
             index2 += 1
 
     def Invers_arrangement(self):
