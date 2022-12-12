@@ -193,7 +193,7 @@ class Thread2(QThread):
 
                 self.Predic_start.append(int(current_price.strip()))
                 self.calcul_data.append(data.copy())  # 리스트로 데이터가 들어간다.
-
+                self.rsi_total.append(data.copy())
 
             if self.calcul_data == None or len(self.calcul_data) < 210:
 
@@ -235,7 +235,7 @@ class Thread2(QThread):
                 else:
                     self.k.acc_portfolio[self.code_in_all].update({"역배열": "아님"})
             
-#####rsi용
+            #####rsi용
             if self.rsi_total == None or len(self.calcul_data) < 210:
                 self.k.acc_portfolio[self.code_in_all].update({"RSI":"데이터 없음"})
 
@@ -249,7 +249,7 @@ class Thread2(QThread):
                 rsi_ad = []
                 rsi = []
 
-                for k in range(200):      #넉넉히 100일치 변화량을 저장
+                for k in range(200):      ##200일치 변화량 저장
                     change.append(float(self.End_data[k+1]-self.End_data[k]))
 
                 for k in range(150):
@@ -294,5 +294,7 @@ class Thread2(QThread):
 
             self.calcul_data.clear()  # 코드에 들어 있는 일봉 데이터 삭제
             self.Predic_start.clear()
+            self.End_data.clear()
+            self.rsi_total.clear()
 
             self.detail_account_info_event_loop.exit()
